@@ -25,7 +25,10 @@ A fully functional AI-powered chat interface built with **React, Tailwind CSS, a
 
 ```bash
 git clone git@github.com:Ben2104/Chat-Bot.git
-cd chatbot
+```
+Navigate the Chat-Bot directory
+```bash
+  cd Chat-Bot
 ```
 
 ### **2. Set Up the Backend**  
