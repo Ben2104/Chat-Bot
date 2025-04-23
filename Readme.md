@@ -19,8 +19,6 @@ A fully functional AI-powered chat interface built with **React, Tailwind CSS, a
 - OpenAI API  
   
 
----
-
 ## **Setup & Installation**  
 
 ### **1. Clone the Repository**  
@@ -50,8 +48,6 @@ Start the backend server:
 node index.js
 ```
 
----
-
 ### **3. Set Up the Frontend**  
 Create another terminal and navigate to the client folder:  
 
@@ -71,7 +67,6 @@ Run the development server:
 npm run dev
 ```
 
----
 
 ## **Features**  
 
