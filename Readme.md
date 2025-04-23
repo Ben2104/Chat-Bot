@@ -1,44 +1,9 @@
-## **CoreGPT Chat Integration**  
-
-**Build your own AI-powered chat interface using React and Node.js.**  
-
-![CoreGPT](https://d3erng0hrrd7m4.cloudfront.net/logo.png)  
-
----
+# LLM Chatbot
 
 ## **Project Title: AI Chat with CoreGPT**  
 
 ### **Description**  
 A fully functional AI-powered chat interface built with **React, Tailwind CSS, and Node.js** that interacts with the **ChatGPT API**. With less than 200 lines of code, you can set up a responsive and efficient chatbot for real-time interaction.  
-
-### **Project Structure**  
-
-```plaintext
-chatbot/
-├── backend/
-│   ├── routes/
-│   │   └── sendMessages.js
-│   ├── utils/
-│   │   └── OpenAiHelpers.js
-│   ├── index.js
-│   ├── package.json
-│   ├── .env
-├── client/
-│   ├── src/
-│   │   ├── pages/
-│   │   │   └── Chat.jsx
-│   │   ├── components/
-│   │   │   ├── InputBox.jsx
-│   │   │   ├── ChatBubble.jsx
-│   │   │   ├── LoadingIndicator.jsx
-│   │   │   ├── Banner.jsx
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── .env
-└── README.md
-```
 
 ---
 
@@ -48,15 +13,12 @@ chatbot/
 - React  
 - Tailwind CSS  
 - Vite  
-- `lucide-react`  
-- `react-markdown`  
 
 ### **Backend:**  
 - Node.js  
 - Express  
 - OpenAI API  
-- CORS  
-- dotenv  
+  
 
 ---
 
@@ -65,7 +27,7 @@ chatbot/
 ### **1. Clone the Repository**  
 
 ```bash
-git clone https://github.com/your-repo/chatbot.git
+git clone git@github.com:Ben2104/Chat-Bot.git
 cd chatbot
 ```
 
