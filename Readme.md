@@ -80,4 +80,4 @@ npm run dev
 ✅ **Fast Setup** – Get started in minutes with minimal setup.  
 ✅ **Modular Components** – Reusable and well-structured codebase.  
 ✅ **Error Handling** – Graceful handling of API failures and errors.  
-✅ **URL Summarization - Users can input a blog or article link, and the app will extract and summarize the content using OpenAI's GPT model.
+✅ **URL Summarization** - Users can input a blog or article link, and the app will extract and summarize the content using OpenAI's GPT model.
