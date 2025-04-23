@@ -3,7 +3,7 @@
 ## **Project Title: AI Chat with CoreGPT**  
 
 ### **Description**  
-A fully functional AI-powered chat interface built with **React, Tailwind CSS, and Node.js** that interacts with the **ChatGPT API**. With less than 200 lines of code, you can set up a responsive and efficient chatbot for real-time interaction.  
+A fully functional AI-powered chat interface built with **React, Tailwind CSS, and Node.js** that interacts with the **ChatGPT API**.
 
 
 ## **Technologies Used**  
@@ -53,11 +53,10 @@ node index.js
 ---
 
 ### **3. Set Up the Frontend**  
-
-Navigate to the client folder:  
+Create another terminal and navigate to the client folder:  
 
 ```bash
-cd ../client
+cd client
 ```
 
 Install dependencies:  
@@ -81,47 +80,4 @@ npm run dev
 ✅ **Fast Setup** – Get started in minutes with minimal setup.  
 ✅ **Modular Components** – Reusable and well-structured codebase.  
 ✅ **Error Handling** – Graceful handling of API failures and errors.  
-
----
-
-## **Get the Code**  
-
-🚀 **ChatGPT Clone:** 👉 [Download the Code](https://www.the-aideveloper.com/products/ez94_t)  
-
-🔥 **CoreGPT Packages:**  
-- **React + Node.js**: [Get It Here](https://checkout.the-aideveloper.com/b/14keVD7vgcDw4mc6pb)  
-- **React + Python FastAPI**: [Get It Here](https://checkout.the-aideveloper.com/b/dR614N8zkdHA8CseVI)  
-
----
-
-## **Guides & Documentation**  
-
-📖 Check out the **full guide** on [theAIDeveloper Guides](https://www.the-aideveloper.com/guides).  
-
----
-
-## **Author**  
-
-👨‍💻 **Carlos Polanco** – Passionate AI Developer and Full Stack Engineer.  
-
-🌎 Learn more at [theAIDeveloper.com](https://www.the-aideveloper.com).  
-
----
-
-## **Connect With Us**  
-
-- [![YouTube](https://img.icons8.com/color/48/000000/youtube-play.png)](https://www.youtube.com/@theaideveloper) **YouTube**  
-- [![Instagram](https://img.icons8.com/color/48/000000/instagram-new.png)](https://www.instagram.com/cptheaideveloper/) **Instagram**  
-- [![Twitter](https://img.icons8.com/color/48/000000/twitter-squared.png)](https://x.com/cpaideveloper) **Twitter**  
-- [![TikTok](https://img.icons8.com/color/48/000000/tiktok.png)](https://www.tiktok.com/@codingnutella) **TikTok**  
-- [![LinkedIn](https://img.icons8.com/color/48/000000/linkedin.png)](https://www.linkedin.com/company/theaidevelopercp/) **LinkedIn**  
-
----
-
-## **License**  
-
-📜 This project is licensed under the [MIT License](LICENSE).  
-
----
-
-# Chat-Bot
+✅ **URL Summarization - Users can input a blog or article link, and the app will extract and summarize the content using OpenAI's GPT model.
