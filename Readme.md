@@ -44,13 +44,6 @@ Install dependencies:
 npm install
 ```
 
-Create a `.env` file and add your OpenAI API key:  
-
-```plaintext
-OPENAI_API_KEY=your_api_key_here
-PORT=8000
-```
-
 Start the backend server:  
 
 ```bash
