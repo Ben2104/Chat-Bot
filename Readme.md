@@ -5,7 +5,6 @@
 ### **Description**  
 A fully functional AI-powered chat interface built with **React, Tailwind CSS, and Node.js** that interacts with the **ChatGPT API**. With less than 200 lines of code, you can set up a responsive and efficient chatbot for real-time interaction.  
 
----
 
 ## **Technologies Used**  
 
