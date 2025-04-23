@@ -3,6 +3,8 @@ import { InputBox } from "../components/InputBox";
 import { ChatBubble } from "../components/ChatBubble";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { Banner } from "../components/Banner";
+import { FileUpload } from "../components/FileUpload";
+import { PDFViewer } from "../components/PDFViewer";
 
 export function Chat() {
   const [input, setInput] = useState("");
@@ -11,6 +13,8 @@ export function Chat() {
   const [showBanner, setShowBanner] = useState(true);
   const [language, setLanguage] = useState("en"); // 'en' for English, 'vi' for Vietnamese
   const messagesEndRef = useRef(null);
+  const [activeTab, setActiveTab] = useState("chat"); // 'chat' or 'pdf'
+  const [activePDF, setActivePDF] = useState(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,21 +39,14 @@ export function Chat() {
           : "Đã chuyển sang tiếng Việt."
       };
     }
-    // Check if it's a summarize URL command (starts with /summarize or /sum)
+    // Check if it's a summarize URL command
     else if (trimmedInput.match(/^\/sum(marize)?\s+https?:\/\/.+/i)) {
       const url = trimmedInput.replace(/^\/sum(marize)?\s+/i, '').trim();
       return handleSummarizeURL(url);
     }
-    // Check if it's a search command (starts with /search)
-    else if (trimmedInput.match(/^\/search\s+.+/i)) {
-      const query = trimmedInput.replace(/^\/search\s+/i, '').trim();
-      // Return an explanation that search is no longer available
-      return {
-        role: "assistant",
-        content: language === 'en'
-          ? "The search function is no longer available."
-          : "Chức năng tìm kiếm không còn khả dụng."
-      };
+    // If there's an active PDF, treat it as a PDF query
+    else if (activePDF) {
+      return handlePDFQuery(trimmedInput, activePDF.id);
     }
     // Regular chat message
     else {
@@ -64,7 +61,7 @@ export function Chat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userInput: trimmedInput,
-          language: language // Send the current language preference
+          language: language
         }),
       });
       const data = await res.json();
@@ -80,6 +77,35 @@ export function Chat() {
     }
   };
 
+  const handlePDFQuery = async (query, pdfId) => {
+    try {
+      const res = await fetch("http://localhost:8000/query-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query,
+          pdfId,
+          language
+        }),
+      });
+      const data = await res.json();
+      return {
+        role: "assistant",
+        content: data.answer || (language === 'en' 
+          ? "I couldn't find an answer to your question in the PDF."
+          : "Tôi không thể tìm thấy câu trả lời cho câu hỏi của bạn trong PDF.")
+      };
+    } catch (error) {
+      console.error("Error querying PDF:", error);
+      return {
+        role: "assistant",
+        content: language === 'en'
+          ? "An error occurred while processing your query."
+          : "Đã xảy ra lỗi khi xử lý truy vấn của bạn."
+      };
+    }
+  };
+
   const handleSummarizeURL = async (url) => {
     try {
       const res = await fetch("http://localhost:8000/summarize", {
@@ -87,7 +113,7 @@ export function Chat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url,
-          language: language // Send the current language preference 
+          language
         }),
       });
       const data = await res.json();
@@ -109,6 +135,20 @@ export function Chat() {
           : `Không thể tóm tắt URL: ${url}. Vui lòng kiểm tra xem URL có hợp lệ không và thử lại.`
       };
     }
+  };
+
+  const handleFileUpload = (pdfData) => {
+    setActivePDF(pdfData);
+    setMessages(prev => [
+      ...prev,
+      {
+        role: "assistant",
+        content: language === 'en' 
+          ? `I've processed your PDF: **${pdfData.fileName}**. You can now ask me questions about its content.`
+          : `Tôi đã xử lý PDF của bạn: **${pdfData.fileName}**. Bây giờ bạn có thể hỏi tôi về nội dung của nó.`
+      }
+    ]);
+    setActiveTab("chat");
   };
 
   const sendMessage = async () => {
@@ -151,53 +191,119 @@ export function Chat() {
       
 Special commands:
 - /summarize [url] - Summarize content from a URL
-- /language [en|vi] - Switch between English and Vietnamese`;
+- /language [en|vi] - Switch between English and Vietnamese
+- Upload a PDF to ask questions about its content`;
     } else {
       return `Tương tác với AI trong thời gian thực. Chỉ cần nhập tin nhắn của bạn và nhận phản hồi ngay lập tức.
       
 Các lệnh đặc biệt:
 - /summarize [url] - Tóm tắt nội dung từ một URL
-- /language [en|vi] - Chuyển đổi giữa tiếng Anh và tiếng Việt`;
+- /language [en|vi] - Chuyển đổi giữa tiếng Anh và tiếng Việt
+- Tải lên PDF để hỏi về nội dung của nó`;
     }
   };
 
   return (
     <div className="flex flex-col w-full h-screen">
-      <div className="flex-1 overflow-auto p-6 space-y-4">
-        {showBanner && (
-          <Banner
-            title={language === 'en' ? "Chat Interaction" : "Tương tác trò chuyện"}
-            description={getBannerDescription()}
-          />
-        )}
-
-        <div className="flex justify-end mb-2">
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="text-sm p-1 bg-gray-100 rounded border border-gray-300"
-          >
-            <option value="en">English</option>
-            <option value="vi">Tiếng Việt</option>
-          </select>
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex">
+            <button
+              className={`py-4 px-6 ${activeTab === 'chat' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+              onClick={() => setActiveTab('chat')}
+            >
+              {language === 'en' ? 'Chat' : 'Trò chuyện'}
+            </button>
+            <button
+              className={`py-4 px-6 ${activeTab === 'pdf' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+              onClick={() => setActiveTab('pdf')}
+            >
+              {language === 'en' ? 'PDF Upload' : 'Tải lên PDF'}
+            </button>
+            <div className="ml-auto flex items-center">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="text-sm p-1 bg-gray-100 rounded border border-gray-300"
+              >
+                <option value="en">English</option>
+                <option value="vi">Tiếng Việt</option>
+              </select>
+            </div>
+          </div>
         </div>
-
-        {messages.map((msg, index) => (
-          <ChatBubble key={index} {...msg} />
-        ))}
-
-        {loading && <LoadingIndicator />}
-        <div ref={messagesEndRef} />
       </div>
 
-      <InputBox
-        input={input}
-        setInput={setInput}
-        onSend={sendMessage}
-        placeholder={language === 'en'
-          ? "Type your message, or use /summarize [url]"
-          : "Nhập tin nhắn của bạn, hoặc sử dụng /summarize [url]"}
-      />
+      <div className="flex-1 overflow-auto p-6">
+        {activeTab === 'chat' ? (
+          <div className="max-w-3xl mx-auto space-y-4">
+            {showBanner && (
+              <Banner
+                title={language === 'en' ? "Chat Interaction" : "Tương tác trò chuyện"}
+                description={getBannerDescription()}
+              />
+            )}
+
+            {activePDF && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="h-5 w-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm font-medium text-blue-800">
+                    {language === 'en' ? 'Active PDF: ' : 'PDF đang hoạt động: '}
+                    {activePDF.fileName}
+                  </span>
+                  <button 
+                    className="ml-auto text-sm text-blue-600 hover:text-blue-800"
+                    onClick={() => setActivePDF(null)}
+                  >
+                    {language === 'en' ? 'Clear' : 'Xóa'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {messages.map((msg, index) => (
+              <ChatBubble key={index} {...msg} />
+            ))}
+
+            {loading && <LoadingIndicator />}
+            <div ref={messagesEndRef} />
+          </div>
+        ) : (
+          <div className="max-w-3xl mx-auto">
+            <div className="mb-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-2">
+                {language === 'en' ? 'Upload a PDF' : 'Tải lên tệp PDF'}
+              </h2>
+              <p className="text-gray-600 mb-4">
+                {language === 'en' 
+                  ? 'Upload a PDF document to ask questions about its content.' 
+                  : 'Tải lên tài liệu PDF để đặt câu hỏi về nội dung của nó.'}
+              </p>
+              <FileUpload onFileUpload={handleFileUpload} language={language} />
+            </div>
+            
+            {activePDF && (
+              <PDFViewer pdfUrl={activePDF.url} fileName={activePDF.fileName} />
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t border-gray-200 p-4">
+        <div className="max-w-3xl mx-auto">
+          <InputBox
+            input={input}
+            setInput={setInput}
+            onSend={sendMessage}
+            placeholder={language === 'en'
+              ? activePDF ? "Ask a question about the PDF..." : "Type your message, or use /summarize [url]"
+              : activePDF ? "Đặt câu hỏi về tệp PDF..." : "Nhập tin nhắn của bạn, hoặc sử dụng /summarize [url]"}
+          />
+        </div>
+      </div>
     </div>
   );
 }
