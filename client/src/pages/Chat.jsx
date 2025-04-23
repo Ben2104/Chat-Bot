@@ -43,7 +43,13 @@ export function Chat() {
     // Check if it's a search command (starts with /search)
     else if (trimmedInput.match(/^\/search\s+.+/i)) {
       const query = trimmedInput.replace(/^\/search\s+/i, '').trim();
-      return handleSearch(query);
+      // Return an explanation that search is no longer available
+      return {
+        role: "assistant",
+        content: language === 'en'
+          ? "The search function is no longer available."
+          : "Chức năng tìm kiếm không còn khả dụng."
+      };
     }
     // Regular chat message
     else {
@@ -105,50 +111,6 @@ export function Chat() {
     }
   };
 
-  const handleSearch = async (query) => {
-    try {
-      const res = await fetch("http://localhost:8000/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query,
-          language: language // Send the current language preference
-        }),
-      });
-      const data = await res.json();
-
-      if (data.searchResults) {
-        const resultsMarkdown = data.searchResults.map(result =>
-          `### [${result.title}](${result.url})\n**${language === 'en' ? 'Source' : 'Nguồn'}:** ${result.source} | **${language === 'en' ? 'Published' : 'Xuất bản'}:** ${result.publishedAt}\n\n${result.description}`
-        ).join('\n\n---\n\n');
-
-        const searchTitle = language === 'en'
-          ? `**Search Results for "${query}"**\n\n`
-          : `**Kết quả tìm kiếm cho "${query}"**\n\n`;
-
-        const analysisTitle = language === 'en' ? "**Analysis:**\n" : "**Phân tích:**\n";
-
-        return {
-          role: "assistant",
-          content: `${searchTitle}${resultsMarkdown}\n\n${analysisTitle}${data.content}`
-        };
-      } else {
-        return {
-          role: "assistant",
-          content: data.content
-        };
-      }
-    } catch (error) {
-      console.error("Error searching:", error);
-      return {
-        role: "assistant",
-        content: language === 'en'
-          ? `Failed to search for "${query}". Please try again later.`
-          : `Không thể tìm kiếm "${query}". Vui lòng thử lại sau.`
-      };
-    }
-  };
-
   const sendMessage = async () => {
     const trimmed = input.trim();
     if (!trimmed) return;
@@ -181,6 +143,7 @@ export function Chat() {
       setLoading(false);
     }
   };
+  
   // Get the banner text based on current language
   const getBannerDescription = () => {
     if (language === 'en') {
@@ -188,7 +151,6 @@ export function Chat() {
       
 Special commands:
 - /summarize [url] - Summarize content from a URL
-- /search [query] - Search for information
 - /language [en|vi] - Switch between English and Vietnamese`;
     } else {
       return `Tương tác với AI trong thời gian thực. Chỉ cần nhập tin nhắn của bạn và nhận phản hồi ngay lập tức.
