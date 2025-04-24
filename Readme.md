@@ -16,7 +16,9 @@ A fully functional AI-powered chat interface built with **React, Tailwind CSS, a
 ### **Backend:**  
 - Node.js  
 - Express  
-- OpenAI API  
+- OpenAI API
+- Multer
+  
   
 
 ## **Setup & Installation**  
@@ -43,6 +45,14 @@ Install dependencies:
 
 ```bash
 npm install
+```
+Create a .env file and add your OpenAI API key:
+```bash
+  touch .env
+```
+```
+  OPENAI_API_KEY=your_api_key_here
+  PORT=8000
 ```
 
 Start the backend server:  
