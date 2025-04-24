@@ -7,7 +7,7 @@ import { FiUpload, FiFile, FiX, FiExternalLink } from "react-icons/fi";
 
 export function Chat() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]); 
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
   const [language, setLanguage] = useState("en");
@@ -30,23 +30,23 @@ export function Chat() {
 
   const validateAndSetPdf = (file) => {
     setUploadError("");
-    
+
     // Validate file type
     if (file.type !== 'application/pdf') {
-      setUploadError(language === "en" 
-        ? "Only PDF files are allowed" 
+      setUploadError(language === "en"
+        ? "Only PDF files are allowed"
         : "Chỉ chấp nhận file PDF");
       return;
     }
-    
+
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError(language === "en" 
-        ? "File size exceeds 5MB limit" 
+      setUploadError(language === "en"
+        ? "File size exceeds 5MB limit"
         : "Kích thước file vượt quá giới hạn 5MB");
       return;
     }
-    
+
     setPdfFile(file);
   };
 
@@ -58,7 +58,7 @@ export function Chat() {
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       validateAndSetPdf(e.dataTransfer.files[0]);
     }
@@ -84,13 +84,13 @@ export function Chat() {
         method: "POST",
         body: formData,
       });
-      
+
       if (!res.ok) {
         throw new Error(`Server responded with status: ${res.status}`);
       }
-      
+
       const data = await res.json();
-      
+
       if (data.success) {
         setPdfUrl(`http://localhost:8000${data.filePath}`);
         setMessages((prev) => [
@@ -149,7 +149,7 @@ export function Chat() {
           {showBanner && (
             <Banner
               title={language === "en" ? "Chat Interaction" : "Tương tác trò chuyện"}
-              description={language === "en" 
+              description={language === "en"
                 ? "Upload a PDF to view its content and interact with it."
                 : "Tải lên một PDF để xem nội dung và tương tác với nó."
               }
@@ -170,7 +170,7 @@ export function Chat() {
         <div className="max-w-3xl mx-auto space-y-4">
           {/* PDF Upload Area */}
           <div className="w-full">
-            <div 
+            <div
               className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
                 ${uploadError ? 'border-red-400 bg-red-50' : 'border-blue-300 hover:bg-blue-50 hover:border-blue-400'}`}
               onDragOver={handleDragOver}
@@ -184,12 +184,12 @@ export function Chat() {
                 onChange={handleFileChange}
                 className="hidden"
               />
-              
+
               <div className="flex flex-col items-center justify-center py-3">
                 <FiUpload className="text-2xl mb-2 text-gray-500" />
                 <p className="text-sm text-gray-600 font-medium">
-                  {pdfFile 
-                    ? pdfFile.name 
+                  {pdfFile
+                    ? pdfFile.name
                     : language === "en"
                       ? "Click or drag a PDF here to upload"
                       : "Nhấp hoặc kéo PDF vào đây để tải lên"
@@ -200,14 +200,14 @@ export function Chat() {
                 </p>
               </div>
             </div>
-            
+
             {/* Error message */}
             {uploadError && (
               <div className="text-red-500 text-xs mt-1 pl-1">
                 {uploadError}
               </div>
             )}
-            
+
             {/* Selected file and action buttons */}
             {pdfFile && (
               <div className="mt-3 flex items-center justify-between p-2 bg-gray-50 rounded-md">
@@ -225,18 +225,17 @@ export function Chat() {
                   >
                     <FiX className="text-lg" />
                   </button>
-                  
+
                   <button
                     onClick={handlePDFUpload}
                     disabled={loading || !pdfFile}
-                    className={`px-3 py-1 rounded text-sm font-medium text-white ${
-                      loading || !pdfFile
+                    className={`px-3 py-1 rounded text-sm font-medium text-white ${loading || !pdfFile
                         ? 'bg-blue-300 cursor-not-allowed'
                         : 'bg-blue-500 hover:bg-blue-600'
-                    }`}
+                      }`}
                   >
-                    {loading ? 
-                      (language === "en" ? 'Uploading...' : 'Đang tải lên...') : 
+                    {loading ?
+                      (language === "en" ? 'Uploading...' : 'Đang tải lên...') :
                       (language === "en" ? 'Upload' : 'Tải lên')
                     }
                   </button>
@@ -245,16 +244,15 @@ export function Chat() {
             )}
           </div>
 
-          {/* PDF Viewer */}
           {pdfUrl && (
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm mt-4">
               <div className="bg-gray-100 border-b p-3 flex justify-between items-center">
                 <div className="text-sm font-medium text-gray-700 truncate">
                   {language === "en" ? "Uploaded PDF" : "PDF đã tải lên"}
                 </div>
-                <a 
-                  href={pdfUrl} 
-                  target="_blank" 
+                <a
+                  href={pdfUrl}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:text-blue-700 flex items-center"
                 >
@@ -264,20 +262,20 @@ export function Chat() {
                   <FiExternalLink size={16} />
                 </a>
               </div>
-              
+
               <iframe
                 src={pdfUrl}
                 title="Uploaded PDF"
-                className="w-full h-96 border-none"
+                className="w-64 h-32 border-none" // Reduced height
               />
             </div>
           )}
-          
+
           {/* Chat Input */}
           <InputBox
             input={input}
             setInput={setInput}
-            onSend={() => {}}
+            onSend={() => { }}
             placeholder={
               language === "en"
                 ? "Type your message, or upload a PDF to interact with it."
